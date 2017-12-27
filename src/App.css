@@ -5,4 +5,10 @@
   color: #333;
   margin: 20px;
   padding: 20px;
+  position: relative;
+  float: right;
+}
+.right{
+  float: right;
+  width: 20%;
 }
