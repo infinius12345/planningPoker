@@ -1,19 +1,26 @@
 import React from 'react';
 import '../index.css'
-import Vote from './Vote.js'
+import card from '../download.png'
 
-export default class UserVotes extends React.PureComponent {
+export default class UserVotes extends React.Component {
     constructor(props){
         super(props);
-        this.userList = props.users.map((user)=> {
-            return <Vote user={user} showVotes={props.showVotes}/>
-        })
     }
     render() {
-        console.log(this.userList);
+        let userList = this.props.users.map((user)=> {
+            if (user.vote !== "" && !this.props.showVotes) {
+               return <div><img src={card} width={50} height={50} /><span>{user.name}</span></div>
+            }
+            else if (this.props.showVotes && user.vote !== "") {
+                return <span><strong>{user.name}</strong>{user.vote} </span>
+            }
+            else {
+                return <span>{user.name}</span>
+            }
+        });
         return (
             <div>
-                {this.userList}
+                {userList}
             </div>
         );
     }

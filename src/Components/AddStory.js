@@ -21,7 +21,6 @@ export default class AddStory extends React.Component {
     }
 
     onAddClick(){
-        console.log("addstory has" + this.state.value);
         this.props.onbtnClick(this.state.value);
         this.setState({value: ''})
     }
@@ -36,7 +35,7 @@ export default class AddStory extends React.Component {
                 onClick={this.onClick}
             />
             <button className="btn btn-primary btn-lg" onClick={this.onAddClick}
-        type="button">Add</button>
+                    type="button">Add</button>
             </div>
         );
     }

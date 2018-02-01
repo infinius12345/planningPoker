@@ -4,6 +4,8 @@ import ChatProxy from "./models/ChatProxy";
 import StoryList from "./Components/StoryList"
 import AddStory from "./Components/AddStory"
 import UserVotes from "./Components/UserVotes"
+import Scoring from "./Components/Scoring"
+import AverageScore from "./Components/AverageScore"
 import "./../node_modules/react-bootstrap-table/css/react-bootstrap-table.css"
 
 const stories = [];
@@ -44,6 +46,7 @@ class App extends React.Component{
         ];
         this.state = {stories: stories, users: users};
         this.addClick = this.addClick.bind(this);
+        this.onCardClick = this.onCardClick.bind(this);
     }
 
     addClick(currStory){
@@ -53,21 +56,33 @@ class App extends React.Component{
                 id: temp.length,
                 story: currStory
             });
-            console.log("Current list" + JSON.stringify(temp));
             this.setState({stories: temp});
         }
+    }
+
+    onCardClick(number){
+        let temp = this.state.users;
+        temp[0].vote = number.toString();
+        this.setState({users: temp});
+        console.log(this.state)
     }
    // const ChatProxy = new ChatProxy();
     //ChatProxy.connect('hello world');
     render() {
+       // console.log(this.state.stories[selected].story);
         return (
             <div>
+                {this.state.stories.length > 2 && <h1>{this.state.stories[selected].story}</h1>}
                 <span className="Middle">
-                    <UserVotes users={this.state.users} showVotes = {true}/>
+                    <UserVotes users={this.state.users} showVotes={false}/>
                 </span>
                 <span className="right">
                     <StoryList stories={this.state.stories} index={selected}/>
                     <AddStory onbtnClick={this.addClick} />
+                </span>
+                <span className="bottom">
+                    <AverageScore users={this.state.users} showVotes={true}/>
+                    <Scoring onClick={this.onCardClick}/>
                 </span>
             </div>
         );
