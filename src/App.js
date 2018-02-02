@@ -71,19 +71,21 @@ class App extends React.Component{
     render() {
        // console.log(this.state.stories[selected].story);
         return (
-            <div>
+            <div className="main">
+                <div className="top">No story
                 {this.state.stories.length > 2 && <h1>{this.state.stories[selected].story}</h1>}
-                <span className="Middle">
-                    <UserVotes users={this.state.users} showVotes={false}/>
-                </span>
-                <span className="right">
+                </div>
+                <div className="middle">
+                    <UserVotes users={this.state.users} showVotes={true}/>
+                </div>
+                <div className="right">
                     <StoryList stories={this.state.stories} index={selected}/>
                     <AddStory onbtnClick={this.addClick} />
-                </span>
-                <span className="bottom">
-                    <AverageScore users={this.state.users} showVotes={true}/>
-                    <Scoring onClick={this.onCardClick}/>
-                </span>
+                </div>
+                 <div className="bottom">
+                     <AverageScore users={this.state.users} showVotes={true}/>
+                      <Scoring onClick={this.onCardClick}/>
+                </div>
             </div>
         );
     }

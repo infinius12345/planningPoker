@@ -4,7 +4,7 @@ import '../index.css'
 export default class Scoring extends React.PureComponent {
     constructor(props){
         super(props);
-        this.list=[1,2,3,5,8,13,21,34,55];
+        this.list=[1,2,3,5,8,13,21,34,55,75,100];
     }
 
     // onAddClick(){
@@ -17,7 +17,7 @@ export default class Scoring extends React.PureComponent {
         return (
             <span>
                 {this.list.map((number) =>
-                <button className="btn btn-primary btn-lg" onClick={()=>this.props.onClick(number)}
+                <button className="card" onClick={()=>this.props.onClick(number)}
                         type="button">{number}</button>
                 )}
             </span>

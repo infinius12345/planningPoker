@@ -3,16 +3,22 @@ import '../index.css'
 import card from '../download.png'
 
 export default class UserVotes extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
     }
+
     render() {
-        let userList = this.props.users.map((user)=> {
+        let tmpstyle = {border: "1px solid green"};
+        let userList = this.props.users.map((user) => {
             if (user.vote !== "" && !this.props.showVotes) {
-               return <div><img src={card} width={50} height={50} /><span>{user.name}</span></div>
+                return <span style={tmpstyle}>
+                    <p className="votes"><button className="cardplayed">?</button>
+                        <span>{user.name}</span>
+                    </p>
+                </span>
             }
             else if (this.props.showVotes && user.vote !== "") {
-                return <span><strong>{user.name}</strong>{user.vote} </span>
+                return <span><button className="cardplayed">{user.vote}</button><strong>{user.name}</strong></span>
             }
             else {
                 return <span>{user.name}</span>
