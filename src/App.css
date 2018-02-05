@@ -1,37 +1,33 @@
 div#root{
   height: 100%;
   width: 100%;
-  border: 0px solid orange;
+  padding: 1em;
 }
 div.main{
   padding: 0em;
   height: 100%;
-  border: 0px dashed black;
 }
 
 div.top{
   font-weight: bold;
   font-size: 2em;
   text-align: center;
-  border: 0px solid yellow;
 }
 div.test{
   width: 100%;
-  border: 0px solid red;
 }
 .right{
   display: inline-block;
   width: 25%;
-  border: 0px solid green;
 }
 .middle{
   display: inline-block;
   width: 75%;
   height: 100%;
   margin: 0em;
-  border: 0px solid green;
   vertical-align: top;
- }
+  text-align: center;
+}
 .bottom{
   clear: both;
   float: left;
@@ -42,7 +38,6 @@ div.test{
   color: black;
   font-size: 36px;
   font-weight: bold;
-  border: 0px solid silver;
 }
 
 button.card, button.cardplayed{

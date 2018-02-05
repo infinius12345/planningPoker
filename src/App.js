@@ -117,7 +117,7 @@ class App extends React.Component{
                 </div>
                 <div className="test">
                     <div className="middle">
-                        <UserVotes users={this.state.users} showVotes={false}/>
+                        <UserVotes users={this.state.users} showVotes={true}/>
                     </div>
                     <div className="right">
                         <StoryList stories={this.state.stories} index={selected}/>
