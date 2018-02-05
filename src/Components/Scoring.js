@@ -16,8 +16,8 @@ export default class Scoring extends React.PureComponent {
         console.log(this.userList);
         return (
             <span>
-                {this.list.map((number) =>
-                <button className="card" onClick={()=>this.props.onClick(number)}
+                {this.list.map((number,i) =>
+                <button className="card" key={i} onClick={()=>this.props.onClick(number)}
                         type="button">{number}</button>
                 )}
             </span>
