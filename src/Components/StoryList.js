@@ -13,8 +13,8 @@ export default class StoryList extends React.Component {
             };
         return (
             <BootstrapTable data={ this.props.stories }
-                            headerStyle={ { border: 'red 1px solid' } }
-                            bodyStyle={ { border: 'green 1px solid' } }
+                            headerStyle={ { border: 'red 0px solid' } }
+                            bodyStyle={ { border: 'green 0px solid' } }
                             selectRow={selectRow}>
                 <TableHeaderColumn dataField='id' isKey={ true } hidden={true} dataAlign='center'>Story</TableHeaderColumn>
                 <TableHeaderColumn width='80%' dataAlign='left' dataField='story'>Story</TableHeaderColumn>

@@ -21,7 +21,6 @@ export default class AddStory extends React.Component {
     }
 
     onAddClick(){
-        console.log("addstory has" + this.state.value);
         this.props.onbtnClick(this.state.value);
         this.setState({value: ''})
     }
@@ -29,14 +28,17 @@ export default class AddStory extends React.Component {
     render() {
         return (
             <div>
-            <input
-                type="text"
-                value={this.state.value}
-                onChange={this.handleChange}
-                onClick={this.onClick}
-            />
-            <button className="btn btn-primary btn-lg" onClick={this.onAddClick}
-        type="button">Add</button>
+                <div class="form-group">
+                    <label for="usr">Story Name:</label>
+                    <input type="text" class="form-control" id="usr" value={this.state.value}
+                           onChange={this.handleChange}
+                           onClick={this.onClick}
+
+                    />
+                    <button className="btn btn-primary btn-sm" onClick={this.onAddClick}
+                        type="button">Add
+                    </button>
+                </div>
             </div>
         );
     }

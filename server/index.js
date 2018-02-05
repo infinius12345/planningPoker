@@ -18,9 +18,16 @@ console.log('Listening on port', port);
 
 var peerServer = new PeerServer({ port:9000, path: '/chat'});
 
+// io.on('connection', function(socket){
+//     console.log("a user has connected");
+//     io.emit("hello");
+// });
+
 peerServer.on('connection',function(id){
+    //peerServer.emit(Topics.USER_CONNECTED, id);
     io.emit(Topics.USER_CONNECTED, id);
     console.log('user connected with #', id);
+    //console.log(peerServer._clients);
 });
 
 peerServer.on('disconnect', function(id) {
