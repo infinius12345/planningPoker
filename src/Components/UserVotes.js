@@ -8,10 +8,9 @@ export default class UserVotes extends React.Component {
     }
 
     render() {
-        let tmpstyle = {border: "1px solid green"};
         let userList = this.props.users.map((user) => {
             if (user.vote !== "" && !this.props.showVotes) {
-                return <span style={tmpstyle}>
+                return <span>
                     <p className="votes">
                         <button className="cardplayed">?
                             <div className="voteName">{user.name}</div>
