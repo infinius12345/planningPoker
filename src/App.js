@@ -24,8 +24,8 @@ function addStories(quantity) {
 
 const selected = 2;
 
-class App extends React.Component{
-    constructor(props){
+class App extends React.Component {
+    constructor(props) {
         super(props);
         addStories(5);
         let stories = [];
@@ -33,7 +33,7 @@ class App extends React.Component{
         this.chatProxy = new ChatProxy();
         // users.push({name: this.props.username,vote: ""});
 
-        this.state = {stories: stories, users: users, userName: null, showVotes: false , selected: 0};
+        this.state = {stories: stories, users: users, userName: null, showVotes: false, selected: 0};
         this.addClick = this.addClick.bind(this);
         this.onCardClick = this.onCardClick.bind(this);
         this.addMessage = this.addMessage.bind(this);
@@ -51,22 +51,22 @@ class App extends React.Component{
         this.chatProxy.onUserDisconnected(this.userDisconnected);
     }
 
-    addMessage(msg){
+    addMessage(msg) {
         let temp = this.state.users;
         temp.forEach(o => {
             if (o.name === msg.author) {
                 o.vote = msg.vote;
             }
         });
- //       debugger;
+        //       debugger;
         this.setState({users: temp});
         //window.alert(JSON.stringify(msg));
     }
 
-    userConnected(user){
+    userConnected(user) {
         let users = this.state.users;
         console.log(this.state.users);
-        users.push({name:user,vote: ""});
+        users.push({name: user, vote: ""});
 
         this.setState({
             users: users
@@ -81,9 +81,9 @@ class App extends React.Component{
         // });
     }
 
-    addClick(currStory){
+    addClick(currStory) {
         let temp = this.state.stories;
-        if(currStory !== "") {
+        if (currStory !== "") {
             temp.push({
                 id: temp.length,
                 story: currStory
@@ -92,15 +92,15 @@ class App extends React.Component{
         }
     }
 
-    addUserNameClick(userName){
+    addUserNameClick(userName) {
         let temp = this.state.users;
-        temp.push({name: userName,vote: ""});
+        temp.push({name: userName, vote: ""});
         this.chatProxy.connect(userName);
         this.setState({users: temp, userName: userName});
         console.log(this.state)
     }
 
-    onCardClick(number){
+    onCardClick(number) {
         let temp = this.state.users;
         temp[0].vote = number.toString();
         this.setState({users: temp});
@@ -108,47 +108,51 @@ class App extends React.Component{
         console.log(this.state)
     }
 
-    onShowVotesClick(){
-        if(this.state.showVotes === false){
+    onShowVotesClick() {
+        if (this.state.showVotes === false) {
             this.setState({showVotes: true});
         }
     }
 
-    onNextStoryClick(){
-        if(this.state.selected < this.state.stories.length) {
+    onNextStoryClick() {
+        if (this.state.selected < this.state.stories.length) {
             let index = this.state.selected + 1;
+
             this.setState({selected: index, showVotes: false});
         }
     }
-   // const ChatProxy = new ChatProxy();
+
+    // const ChatProxy = new ChatProxy();
     //ChatProxy.connect('hello world');
     render() {
-       // console.log(this.state.stories[selected].story);
+        // console.log(this.state.stories[selected].story);
         let jsx;
         let admin = false;
-        if(this.state.userName == "admin"){
+        if (this.state.userName == "admin") {
             admin = true;
         }
 
-        if(this.state.userName) {
+        if (this.state.userName) {
             jsx =
                 <span>
-                <div className="top">No story
-                    {this.state.stories.length > 2 && <h1>{this.state.stories[selected].story}</h1>}
+                <div className="top">
+                    {this.state.stories.length === 0 && <h1>No Story</h1>}
+                    {this.state.stories.length > 0 &&
+                    <h1>{this.state.stories[this.state.selected].story}</h1>}
                 </div>
                 <div className="test">
                     <div className="middle">
                         <UserVotes users={this.state.users} showVotes={this.state.showVotes}/>
                     </div>
                     <div className="right">
-                        <StoryList stories={this.state.stories} index={selected}/>
+                        <StoryList stories={this.state.stories} index={this.state.selected}/>
                         {admin && <AddStory onbtnClick={this.addClick} title="Story Name:"/>}
                         {admin &&
                         <button className="btn btn-primary btn-sm"
-                        onClick={this.onShowVotesClick}>Show Votes</button>}
+                                onClick={this.onShowVotesClick}>Show Votes</button>}
                         {admin &&
                         <button className="btn btn-primary btn-sm"
-                        onClick={this.onNextStoryClick}>Next Story</button>}
+                                onClick={this.onNextStoryClick}>Next Story</button>}
                     </div>
                 </div>
                 <div className="bottom">
@@ -157,8 +161,7 @@ class App extends React.Component{
                 </div>;
             </span>
         }
-        else
-        {
+        else {
             jsx = <div className="username">
                 <h1>Welcome To Lone Wolf Planning Poker</h1>
                 <AddStory onbtnClick={this.addUserNameClick} title="Enter Your Name:"/>
