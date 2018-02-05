@@ -142,7 +142,7 @@ class App extends React.Component{
                     </div>
                     <div className="right">
                         <StoryList stories={this.state.stories} index={selected}/>
-                        {admin && <AddStory onbtnClick={this.addClick}/>}
+                        {admin && <AddStory onbtnClick={this.addClick} title="Story Name:"/>}
                         {admin &&
                         <button className="btn btn-primary btn-sm"
                         onClick={this.onShowVotesClick}>Show Votes</button>}
@@ -159,7 +159,10 @@ class App extends React.Component{
         }
         else
         {
-            jsx = <AddStory onbtnClick={this.addUserNameClick}/>
+            jsx = <div className="username">
+                <h1>Welcome To Lone Wolf Planning Poker</h1>
+                <AddStory onbtnClick={this.addUserNameClick} title="Enter Your Name:"/>
+            </div>
         }
         return (
             <div className="main">
