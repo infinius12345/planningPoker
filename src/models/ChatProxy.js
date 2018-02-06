@@ -83,7 +83,15 @@ ChatProxy.prototype.connect = function (username) {
     this.setUsername(username);
 
     window.IO = io('http://localhost:3001');
-    this.socket = io('http://localhost:3001');
+    console.log(window.location.href);
+    if(window.location.href === "http://localhost:3000") {
+        this.socket = io('http://localhost:3001');
+    }
+    else{
+        let url = window.location.href;
+        url = url.slice(0,url.length-2) + "1";
+        this.socket = io(url)
+    }
     this.socket.on('connect',function() {
         self.socket.on(Topics.USER_CONNECTED, function (userId) {
             //console.log('arguments', arguments);
