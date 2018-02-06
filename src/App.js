@@ -31,8 +31,10 @@ class App extends React.Component {
         let stories = [];
         let users = [];// users.push({name: this.props.username,vote: ""});
 
-        this.state = {stories: stories, users: users, userName: null
-            , showVotes: false, selected: 0, currAvg: 0};
+        this.state = {
+            stories: stories, users: users, userName: null
+            , showVotes: false, selected: 0, currAvg: 0, time: null
+        };
 
         this.addClick = this.addClick.bind(this);
         this.averageScore = this.averageScore.bind(this);
@@ -48,7 +50,7 @@ class App extends React.Component {
         this.getVotes = this.getVotes.bind(this);
         this.getShowVotes = this.getShowVotes.bind(this);
 
-        this.chatProxy = new ChatProxy(this.allStories,this.getSelected,this.getVotes,this.getShowVotes);
+        this.chatProxy = new ChatProxy(this.allStories, this.getSelected, this.getVotes, this.getShowVotes);
 
     }
 
@@ -57,38 +59,43 @@ class App extends React.Component {
         this.chatProxy.onMessage(this.addMessage);
         this.chatProxy.onUserConnected(this.userConnected);
         this.chatProxy.onUserDisconnected(this.userDisconnected);
+        setInterval( () => {
+            this.setState({
+                time : new Date().toLocaleString()
+            })
+        },1000)
     }
 
-    componentDidUpdate(prevProps, prevState){
-        if(prevState.selected!== this.state.selected) {
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.selected !== this.state.selected) {
             this.chatProxy.broadcastSelected();
         }
-        if(prevState.showVotes !== this.state.showVotes){
+        if (prevState.showVotes !== this.state.showVotes) {
             this.chatProxy.broadcastShowVotes();
         }
     }
 
-    getShowVotes(){
+    getShowVotes() {
         return this.state.showVotes;
     }
 
-    getVotes(){
+    getVotes() {
         return this.state.users[0].vote;
     }
 
-    allStories(){
+    allStories() {
         return this.state.stories;
     }
 
-    getSelected(){
+    getSelected() {
         return this.state.selected;
     }
 
     addMessage(msg) {
         console.log(typeof msg.inc);
-        console.log("message is ",msg.inc);
-        if(typeof msg.inc === "string") {
-            if(msg.inc !== "") {
+        console.log("message is ", msg.inc);
+        if (typeof msg.inc === "string") {
+            if (msg.inc !== "") {
                 let temp = this.state.users;
                 temp.forEach(o => {
                     if (o.name === msg.author) {
@@ -101,19 +108,21 @@ class App extends React.Component {
             }
             else {
                 let temp = this.state.users;
-                temp.forEach(o => { o.vote = "";});
+                temp.forEach(o => {
+                    o.vote = "";
+                });
                 this.setState({users: temp});
             }
         }
-        if(typeof msg.inc === "boolean"){
-                this.setState({showVotes: msg.inc});
+        if (typeof msg.inc === "boolean") {
+            this.setState({showVotes: msg.inc});
         }
-       if(typeof msg.inc === "object"){
+        if (typeof msg.inc === "object") {
             this.setState({stories: msg.inc});
-       }
-       if(typeof msg.inc === "number"){
-           this.setState({selected: (msg.inc)});
-       }
+        }
+        if (typeof msg.inc === "number") {
+            this.setState({selected: (msg.inc)});
+        }
         //window.alert(JSON.stringify(msg));
     }
 
@@ -165,31 +174,35 @@ class App extends React.Component {
     }
 
     onShowVotesClick() {
-        if (this.state.showVotes === false) {
-            this.setState({showVotes: true});
+        if (window.confirm("You are about to reveal the current votes. Proceed?")) {
+            if (this.state.showVotes === false) {
+                this.setState({showVotes: true});
+            }
+            this.chatProxy.broadcast(true);
         }
-        this.chatProxy.broadcast(true);
     }
 
     onNextStoryClick() {
-        if (this.state.selected < (this.state.stories.length -1)) {
+        if (this.state.selected < (this.state.stories.length - 1)) {
             let index = this.state.selected + 1;
             let temp = this.state.stories;
             temp[this.state.selected].avg = this.state.currAvg;
             let users = this.state.users;
-            users.forEach((user)=>{user.vote=""});
+            users.forEach((user) => {
+                user.vote = ""
+            });
             this.setState({selected: index, showVotes: false, stories: temp, users: users});
         }
         this.chatProxy.broadcastStories();
         this.chatProxy.broadcastNewVotes();
     }
 
-    averageScore(){
-        let votes = this.state.users.map((user)=> {
+    averageScore() {
+        let votes = this.state.users.map((user) => {
             return Number(user.vote)
         });
         let avg;
-        if (votes.length >0) {
+        if (votes.length > 0) {
             let sum = votes.reduce((previous, current) => current += previous);
             avg = sum / votes.length;
             avg = avg.toFixed(0);
@@ -207,7 +220,7 @@ class App extends React.Component {
         if (this.state.userName === "admin") {
             admin = true;
         }
-        if(this.state.selected === (this.state.stories.length-1)){
+        if (this.state.selected === (this.state.stories.length - 1)) {
             disableNext = true
         }
 
@@ -215,27 +228,30 @@ class App extends React.Component {
             jsx =
                 <span>
                 <div className="top">
+                    Lone Wolf Planning Poker {this.state.time}
                     {this.state.stories.length === 0 && <h1>No Story</h1>}
                     {this.state.stories.length > 0 &&
                     <h1>{this.state.stories[this.state.selected].story}</h1>}
                 </div>
-                <div className="test">
-                    <div className="middle">
+                 <div className="test">
+                     <div className="middle">
                         <UserVotes users={this.state.users} showVotes={this.state.showVotes}/>
-                    </div>
-                    <div className="right">
-                        <StoryList stories={this.state.stories} index={this.state.selected}/>
-                        {admin && <AddStory onbtnClick={this.addClick} title="Story Name:"/>}
-                        {admin &&
-                        <button className="btn btn-primary btn-sm"
-                                onClick={this.onShowVotesClick}>Show Votes</button>}
-                        {admin &&
-                        <button className="btn btn-primary btn-sm" disabled={disableNext}
-                                onClick={this.onNextStoryClick}>Next Story</button>}
-                    </div>
-                </div>
+                        <AverageScore users={this.state.users} showVotes={this.state.showVotes} avg={this.state.currAvg}/>
+                     </div>
+                     <div className="right">
+                         <StoryList stories={this.state.stories} index={this.state.selected}/>
+                         {admin && <button className="btn btn-danger btn-sm"
+                                 title="Reveal votes for current story"
+                                 disabled={this.state.showVotes}
+                                 onClick={this.onShowVotesClick}>Show Votes</button>}
+                         {admin && <button className="btn btn-default btn-sm"
+                                 title="Proceed to next story in the list"
+                                 disabled={disableNext}
+                                 onClick={this.onNextStoryClick}>Next Story</button>}
+                         {admin && <AddStory onbtnClick={this.addClick} title="Story Name:"/>}
+                     </div>
+                 </div>
                 <div className="bottom">
-                    <AverageScore users={this.state.users} showVotes={this.state.showVotes} avg ={this.state.currAvg}/>
                     <Scoring onClick={this.onCardClick}/>
                 </div>;
             </span>

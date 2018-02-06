@@ -45,7 +45,7 @@ div.test{
   font-weight: bold;
 }
 
-button.card, button.cardplayed{
+button.card, button.cardplayed, button.noVote{
   border-radius: 6px;
   -webkit-box-shadow: 10px 10px 21px -6px rgba(0,0,0,0.75);
   -moz-box-shadow: 10px 10px 21px -6px rgba(0,0,0,0.75);
@@ -62,6 +62,12 @@ button.card, button.cardplayed{
 button.cardplayed{
   background-color: black;
   color: white;
+}
+
+button.noVote{
+  background-color: transparent;
+  color: black;
+  border: 2px solid grey;
 }
 
 button.card:hover{
@@ -87,4 +93,7 @@ div.username{
   bottom: 0;
   left: 0;
   height: 25%;
+}
+.btn{
+  margin: 6px;
 }
