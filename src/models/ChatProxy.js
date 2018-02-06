@@ -9,9 +9,13 @@ const Topics = {
 };
 
 
-function ChatProxy() {
+function ChatProxy(getStories,getSelected,getVotes,getShowVotes) {
     this.EventEmitter = new EventEmitter();
     this._peers = {};
+    this.getStories = getStories;
+    this.getSelected = getSelected;
+    this.getVotes = getVotes;
+    this.getShowVotes = getShowVotes;
 }
 ChatProxy.prototype = Object.create(EventEmitter.prototype);
 
@@ -29,7 +33,6 @@ ChatProxy.prototype.setUsername = function (username) {
 };
 
 ChatProxy.prototype.onUserConnected = function (cb) {
-    console.log("hi");
     this.EventEmitter.on(Topics.USER_CONNECTED, cb);
 };
 
@@ -44,6 +47,34 @@ ChatProxy.prototype.send = function (user, message) {
 ChatProxy.prototype.broadcast = function (msg) {
     for (var peer in this._peers) {
         this.send(peer, msg);
+    }
+};
+
+ChatProxy.prototype.broadcastStories = function () {
+    let stories = this.getStories();
+    for (var peer in this._peers) {
+        this.send(peer, stories);
+    }
+};
+
+ChatProxy.prototype.broadcastSelected = function () {
+    let selected = this.getSelected();
+    for (var peer in this._peers) {
+        this.send(peer, selected);
+    }
+};
+
+ChatProxy.prototype.broadcastShowVotes = function () {
+    let selected = this.getShowVotes();
+    for (var peer in this._peers) {
+        this.send(peer, selected);
+    }
+};
+
+ChatProxy.prototype.broadcastNewVotes = function () {
+    let selected = "";
+    for (var peer in this._peers) {
+        this.send(peer, selected);
     }
 };
 
@@ -100,9 +131,23 @@ ChatProxy.prototype._connectTo = function (username) {
 ChatProxy.prototype._registerPeer = function (username, conn) {
     console.log('Registering', username);
     this._peers[username] = conn;
+    if(this._username === "admin"){
+        // let stories = this.getStories();
+        // conn.send(stories);
+        let stories = this.getStories();
+        this.send(username,stories);
+        let selected = this.getSelected();
+        // conn.send(selected);
+        this.send(username,selected);
+        //this.send(username,)
+    }
+    let votes = this.getVotes();
+    this.send(username,votes);
+    let showVotes = this.getShowVotes();
+    this.send(username,showVotes);
     conn.on('data', function (msg) {
         console.log('Messaga received', msg , username);
-        this.EventEmitter.emit(Topics.USER_MESSAGE, { vote: msg, author: username });
+        this.EventEmitter.emit(Topics.USER_MESSAGE, { inc: msg, author: username });
     }.bind(this));
 };
 

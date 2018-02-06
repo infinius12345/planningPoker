@@ -29,12 +29,13 @@ class App extends React.Component {
         super(props);
         addStories(5);
         let stories = [];
-        let users = [];
-        this.chatProxy = new ChatProxy();
-        // users.push({name: this.props.username,vote: ""});
+        let users = [];// users.push({name: this.props.username,vote: ""});
 
-        this.state = {stories: stories, users: users, userName: null, showVotes: false, selected: 0};
+        this.state = {stories: stories, users: users, userName: null
+            , showVotes: false, selected: 0, currAvg: 0};
+
         this.addClick = this.addClick.bind(this);
+        this.averageScore = this.averageScore.bind(this);
         this.onCardClick = this.onCardClick.bind(this);
         this.addMessage = this.addMessage.bind(this);
         this.userConnected = this.userConnected.bind(this);
@@ -42,6 +43,13 @@ class App extends React.Component {
         this.addUserNameClick = this.addUserNameClick.bind(this);
         this.onShowVotesClick = this.onShowVotesClick.bind(this);
         this.onNextStoryClick = this.onNextStoryClick.bind(this);
+        this.allStories = this.allStories.bind(this);
+        this.getSelected = this.getSelected.bind(this);
+        this.getVotes = this.getVotes.bind(this);
+        this.getShowVotes = this.getShowVotes.bind(this);
+
+        this.chatProxy = new ChatProxy(this.allStories,this.getSelected,this.getVotes,this.getShowVotes);
+
     }
 
     componentDidMount() {
@@ -51,15 +59,61 @@ class App extends React.Component {
         this.chatProxy.onUserDisconnected(this.userDisconnected);
     }
 
+    componentDidUpdate(prevProps, prevState){
+        if(prevState.selected!== this.state.selected) {
+            this.chatProxy.broadcastSelected();
+        }
+        if(prevState.showVotes !== this.state.showVotes){
+            this.chatProxy.broadcastShowVotes();
+        }
+    }
+
+    getShowVotes(){
+        return this.state.showVotes;
+    }
+
+    getVotes(){
+        return this.state.users[0].vote;
+    }
+
+    allStories(){
+        return this.state.stories;
+    }
+
+    getSelected(){
+        return this.state.selected;
+    }
+
     addMessage(msg) {
-        let temp = this.state.users;
-        temp.forEach(o => {
-            if (o.name === msg.author) {
-                o.vote = msg.vote;
+        console.log(typeof msg.inc);
+        console.log("message is ",msg.inc);
+        if(typeof msg.inc === "string") {
+            if(msg.inc !== "") {
+                let temp = this.state.users;
+                temp.forEach(o => {
+                    if (o.name === msg.author) {
+                        o.vote = msg.inc;
+                    }
+                });
+                this.averageScore();
+                //       debugger;
+                this.setState({users: temp});
             }
-        });
-        //       debugger;
-        this.setState({users: temp});
+            else {
+                let temp = this.state.users;
+                temp.forEach(o => { o.vote = "";});
+                this.setState({users: temp});
+            }
+        }
+        if(typeof msg.inc === "boolean"){
+                this.setState({showVotes: msg.inc});
+        }
+       if(typeof msg.inc === "object"){
+            this.setState({stories: msg.inc});
+       }
+       if(typeof msg.inc === "number"){
+           this.setState({selected: (msg.inc)});
+       }
         //window.alert(JSON.stringify(msg));
     }
 
@@ -86,10 +140,12 @@ class App extends React.Component {
         if (currStory !== "") {
             temp.push({
                 id: temp.length,
-                story: currStory
+                story: currStory,
+                avg: 0
             });
             this.setState({stories: temp});
         }
+        this.chatProxy.broadcastStories();
     }
 
     addUserNameClick(userName) {
@@ -103,23 +159,42 @@ class App extends React.Component {
     onCardClick(number) {
         let temp = this.state.users;
         temp[0].vote = number.toString();
+        this.averageScore();
         this.setState({users: temp});
         this.chatProxy.broadcast(temp[0].vote);
-        console.log(this.state)
     }
 
     onShowVotesClick() {
         if (this.state.showVotes === false) {
             this.setState({showVotes: true});
         }
+        this.chatProxy.broadcast(true);
     }
 
     onNextStoryClick() {
-        if (this.state.selected < this.state.stories.length) {
+        if (this.state.selected < (this.state.stories.length -1)) {
             let index = this.state.selected + 1;
-
-            this.setState({selected: index, showVotes: false});
+            let temp = this.state.stories;
+            temp[this.state.selected].avg = this.state.currAvg;
+            let users = this.state.users;
+            users.forEach((user)=>{user.vote=""});
+            this.setState({selected: index, showVotes: false, stories: temp, users: users});
         }
+        this.chatProxy.broadcastStories();
+        this.chatProxy.broadcastNewVotes();
+    }
+
+    averageScore(){
+        let votes = this.state.users.map((user)=> {
+            return Number(user.vote)
+        });
+        let avg;
+        if (votes.length >0) {
+            let sum = votes.reduce((previous, current) => current += previous);
+            avg = sum / votes.length;
+            avg = avg.toFixed(0);
+        }
+        this.setState({currAvg: avg});
     }
 
     // const ChatProxy = new ChatProxy();
@@ -127,9 +202,13 @@ class App extends React.Component {
     render() {
         // console.log(this.state.stories[selected].story);
         let jsx;
+        let disableNext = false;
         let admin = false;
-        if (this.state.userName == "admin") {
+        if (this.state.userName === "admin") {
             admin = true;
+        }
+        if(this.state.selected === (this.state.stories.length-1)){
+            disableNext = true
         }
 
         if (this.state.userName) {
@@ -151,12 +230,12 @@ class App extends React.Component {
                         <button className="btn btn-primary btn-sm"
                                 onClick={this.onShowVotesClick}>Show Votes</button>}
                         {admin &&
-                        <button className="btn btn-primary btn-sm"
+                        <button className="btn btn-primary btn-sm" disabled={disableNext}
                                 onClick={this.onNextStoryClick}>Next Story</button>}
                     </div>
                 </div>
                 <div className="bottom">
-                    <AverageScore users={this.state.users} showVotes={this.state.showVotes}/>
+                    <AverageScore users={this.state.users} showVotes={this.state.showVotes} avg ={this.state.currAvg}/>
                     <Scoring onClick={this.onCardClick}/>
                 </div>;
             </span>

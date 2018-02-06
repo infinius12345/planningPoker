@@ -12,17 +12,8 @@ export default class AverageScore extends React.Component {
     // }
 
     render() {
-        let votes = this.props.users.map((user)=> {
-          return Number(user.vote)
-        });
-        let avg;
-        if (votes.length >0) {
-            let sum = votes.reduce((previous, current) => current += previous);
-            avg = sum / votes.length;
-            avg = avg.toFixed(0);
-            avg = "Average Score: " + avg;
-        }
         // let average = this.props.users.
+        let avg = "Average Score: " + this.props.avg;
         return (
             <p>
                 <span className="avgscore">
