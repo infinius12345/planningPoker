@@ -175,9 +175,7 @@ class App extends React.Component {
 
     onShowVotesClick() {
         if (window.confirm("You are about to reveal the current votes. Proceed?")) {
-            if (this.state.showVotes === false) {
-                this.setState({showVotes: true});
-            }
+            this.setState({showVotes: true});
             this.chatProxy.broadcast(true);
         }
     }
@@ -236,7 +234,7 @@ class App extends React.Component {
                  <div className="test">
                      <div className="middle">
                         <UserVotes users={this.state.users} showVotes={this.state.showVotes}/>
-                        <AverageScore users={this.state.users} showVotes={this.state.showVotes} avg={this.state.currAvg}/>
+                        <AverageScore showVotes={this.state.showVotes} avg={this.state.currAvg}/>
                      </div>
                      <div className="right">
                          <StoryList stories={this.state.stories} index={this.state.selected}/>
