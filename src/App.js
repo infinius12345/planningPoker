@@ -226,7 +226,7 @@ class App extends React.Component {
             jsx =
                 <span>
                 <div className="top">
-                    Lone Wolf Planning Poker {this.state.time}
+                    Planning Poker {this.state.time}
                     {this.state.stories.length === 0 && <h1>No Story</h1>}
                     {this.state.stories.length > 0 &&
                     <h1>{this.state.stories[this.state.selected].story}</h1>}
@@ -256,8 +256,8 @@ class App extends React.Component {
         }
         else {
             jsx = <div className="username">
-                <h1>Welcome To Lone Wolf Planning Poker</h1>
-                <AddStory onbtnClick={this.addUserNameClick} title="Enter Your Name:"/>
+                <h1>Welcome To Planning Poker</h1>
+                <AddStory onbtnClick={this.addUserNameClick} title="Enter Your Name: (Use admin for More options)"/>
             </div>
         }
         return (

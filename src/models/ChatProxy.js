@@ -1,4 +1,4 @@
-import EventEmitter from "EventEmitter";
+import EventEmitter from "../Components/index";
 import io from 'socket.io-client';
 import Peer from 'peerjs'
 
