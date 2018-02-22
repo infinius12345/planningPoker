@@ -1,19 +1,47 @@
 import React from 'react';
 import '../index.css'
-import Vote from './Vote.js'
+import card from '../download.png'
 
-export default class UserVotes extends React.PureComponent {
-    constructor(props){
+export default class UserVotes extends React.Component {
+    constructor(props) {
         super(props);
-        this.userList = props.users.map((user)=> {
-            return <Vote user={user} showVotes={props.showVotes}/>
-        })
     }
+
     render() {
-        console.log(this.userList);
+        let empty;
+        let insert;
+        let userList = this.props.users.map((user) => {
+            empty = "cardplayed";
+            insert = "?";
+            if (!this.props.showVotes) {
+                if (user.vote === "") {
+                    empty = "noVote";
+                    insert = "";
+                }
+                return <span>
+                    <p className="votes">
+                        <button className={empty}>
+                            {insert}
+                            <div className="voteName">
+                                {user.name}
+                            </div>
+                        </button>
+                    </p>
+                </span>
+            } else {
+                return <span>
+                    <button className="cardplayed">
+                        {user.vote}
+                        <div className="voteName">
+                            {user.name}
+                        </div>
+                    </button>
+                </span>
+            }
+        });
         return (
             <div>
-                {this.userList}
+                {userList}
             </div>
         );
     }
